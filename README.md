@@ -36,6 +36,8 @@ $jobs = $client->setKeyword('project manager')
     ->getJobs();
 ```
 
+The `getJobs` method will return a [Collection](https://github.com/JobBrander/jobs-common/blob/master/src/Collection.php) of [Job](https://github.com/JobBrander/jobs-common/blob/master/src/Job.php) objects.
+
 ## Testing
 
 ``` bash
