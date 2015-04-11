@@ -22,7 +22,18 @@ composer require jobbrander/jobs-indeed
 Usage is the same as Job Branders's Jobs Client, using `\JobBrander\Jobs\Client\Provider\Indeed` as the provider.
 
 ```php
+$client = new Indeed([
+    'publisherId' => 'YOUR INDEED PUBLISHER ID',
+    'version' => 2,
+    'highlight' => 0,
+]);
 
+// Search for 200 job listings for 'project manager' in Chicago, IL
+$jobs = $client->setKeyword('project manager')
+    ->setCity('Chicago')
+    ->setState('IL')
+    ->setCount(200)
+    ->getJobs();
 ```
 
 ## Testing
