@@ -30,7 +30,7 @@ class Indeed extends AbstractProvider
      *
      * @param array $payload
      *
-     * @return \JobBrander\Jobs\Job
+     * @return \JobBrander\Jobs\Client\Job
      */
     public function createJobObject($payload)
     {
