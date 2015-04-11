@@ -1,0 +1,39 @@
+{
+    "name": "jobbrander/jobs-indeed",
+    "type": "library",
+    "description": "Making it simple to integrate your application with Indeed Jobs API.",
+    "keywords": [
+        "jobs",
+        "api client",
+        "object",
+        "indeed"
+    ],
+    "homepage": "https://github.com/JobBrander/jobs-indeed",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Steven Maguire",
+            "email": "stevenmaguire@gmail.com",
+            "homepage": "https://github.com/stevenmaguire"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "jobbrander/jobs-common": "~0.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "3.7.*",
+        "phpunit/php-code-coverage": "~2.0",
+        "mockery/mockery": ">=0.9.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "JobBrander\\Jobs\\Client\\Providers\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "JobBrander\\Jobs\\Client\\Providers\\Test\\": "tests/src/"
+        }
+    }
+}
