@@ -22,7 +22,7 @@ composer require jobbrander/jobs-indeed
 Usage is the same as Job Branders's Jobs Client, using `\JobBrander\Jobs\Client\Provider\Indeed` as the provider.
 
 ```php
-$client = new Indeed([
+$client = new JobBrander\Jobs\Client\Provider\Indeed([
     'publisherId' => 'YOUR INDEED PUBLISHER ID',
     'version' => 2,
     'highlight' => 0,
@@ -55,4 +55,4 @@ Please see [CONTRIBUTING](https://github.com/jobbrander/jobs-indeed/blob/master/
 
 ## License
 
-The MIT License (MIT). Please see [License File](https://github.com/jobbrander/jobs-indeed/blob/master/LICENSE) for more information.
+The Apache 2.0. Please see [License File](https://github.com/jobbrander/jobs-indeed/blob/master/LICENSE) for more information.
