@@ -118,12 +118,10 @@ class Indeed extends AbstractProvider
         $query_string = [];
 
         array_walk($query_params, function ($value, $key) use (&$query_string) {
-            try {
-                $computed_value = $this->$value();
-                if (!is_null($computed_value)) {
-                    $query_string[$key] = $computed_value;
-                }
-            } catch (\Exception $e) {}
+            $computed_value = $this->$value();
+            if (!is_null($computed_value)) {
+                $query_string[$key] = $computed_value;
+            }
         });
 
         return http_build_query($query_string);
