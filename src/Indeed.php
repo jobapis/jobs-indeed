@@ -72,6 +72,22 @@ class Indeed extends AbstractProvider
     }
 
     /**
+     * Get combined location
+     *
+     * @return string
+     */
+    public function getLocation()
+    {
+        $location = ($this->city ? $this->city.', ' : null).($this->state ?: null);
+
+        if ($location) {
+            return $location;
+        }
+
+        return null;
+    }
+
+    /**
      * Get parameters
      *
      * @return  array
@@ -82,21 +98,47 @@ class Indeed extends AbstractProvider
     }
 
     /**
+     * Get query string for client based on properties
+     *
+     * @return string
+     */
+    public function getQueryString()
+    {
+        $query_params = [
+            'publisher' => 'getPublisherId',
+            'v' => 'getVersion',
+            'highlight' => 'getHighlight',
+            'format' => 'getFormat',
+            'q' => 'getKeyword',
+            'l' => 'getLocation',
+            'start' => 'getPage',
+            'limit' => 'getCount',
+        ];
+
+        $query_string = [];
+
+        array_walk($query_params, function ($value, $key) use (&$query_string) {
+            try {
+                $computed_value = $this->$value();
+                if (!is_null($computed_value)) {
+                    $query_string[$key] = $computed_value;
+                }
+            } catch (\Exception $e) {}
+        });
+
+        return http_build_query($query_string);
+    }
+
+    /**
      * Get url
      *
      * @return  string
      */
     public function getUrl()
     {
-        return 'http://api.indeed.com/ads/apisearch?'
-            .'publisher='.$this->publisherId.'&'
-            .'v='.$this->version.'&'
-            .'highlight='.$this->highlight.'&'
-            .'format='.$this->getFormat().'&'
-            .'q='.urlencode($this->keyword).'&'
-            .'l='.urlencode($this->city.', '.$this->state).'&'
-            .'start='.$this->page.'&'
-            .'limit='.$this->count;
+        $query_string = $this->getQueryString();
+
+        return 'http://api.indeed.com/ads/apisearch?'.$query_string;
     }
 
     /**
