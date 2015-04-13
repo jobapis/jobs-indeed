@@ -39,16 +39,19 @@ class Indeed extends AbstractProvider
 
         $payload = static::parseAttributeDefaults($payload, $defaults);
 
-        return new Job([
+        $job = new Job([
             'title' => $payload['jobtitle'],
-            'companies' => $payload['company'],
-            'locations' => $payload['formattedLocation'],
             'source' => $payload['source'],
             'dates' => $payload['date'],
             'description' => $payload['snippet'],
             'url' => $payload['url'],
             'id' => $payload['jobkey'],
         ]);
+
+        $job->addCompanies($payload['company'])
+            ->addLocations($payload['formattedLocation']);
+
+        return $job;
     }
 
     /**
