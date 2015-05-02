@@ -221,10 +221,12 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
         $listings = ['results' => $this->getResultItems($jobCount)];
         $source = $this->client->getSource();
         $keyword = 'project manager';
+        $city = 'Chicago';
+        $state = 'IL';
 
         $this->client->setKeyword($keyword)
-            ->setCity('Chicago')
-            ->setState('IL');
+            ->setCity($city)
+            ->setState($state);
 
         $response = m::mock('GuzzleHttp\Message\Response');
         $response->shouldReceive($this->client->getFormat())->once()->andReturn($listings);

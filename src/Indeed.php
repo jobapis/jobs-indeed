@@ -26,6 +26,29 @@ class Indeed extends AbstractProvider
     protected $highlight;
 
     /**
+     * Query params
+     *
+     * @var array
+     */
+    protected $queryParams = [];
+
+    /**
+     * Add query params, if valid
+     *
+     * @param string $value
+     * @param string $key
+     *
+     * @return  void
+     */
+    private function addToQueryStringIfValid($value, $key)
+    {
+        $computed_value = $this->$value();
+        if (!is_null($computed_value)) {
+            $this->queryParams[$key] = $computed_value;
+        }
+    }
+
+    /**
      * Returns the standardized job object
      *
      * @param array $payload
@@ -115,16 +138,9 @@ class Indeed extends AbstractProvider
             'limit' => 'getCount',
         ];
 
-        $query_string = [];
+        array_walk($query_params, [$this, 'addToQueryStringIfValid']);
 
-        array_walk($query_params, function ($value, $key) use (&$query_string) {
-            $computed_value = $this->$value();
-            if (!is_null($computed_value)) {
-                $query_string[$key] = $computed_value;
-            }
-        });
-
-        return http_build_query($query_string);
+        return http_build_query($this->queryParams);
     }
 
     /**
