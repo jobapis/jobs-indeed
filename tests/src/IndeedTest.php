@@ -15,6 +15,26 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
         $this->client = new Indeed($this->params);
     }
 
+    private function getResultItems($count = 1)
+    {
+        $results = [];
+
+        for ($i = 0; $i < $count; $i++) {
+            array_push($results, [
+                'jobtitle' => uniqid(),
+                'company' => uniqid(),
+                'formattedLocation' => uniqid(),
+                'source' => uniqid(),
+                'date' => uniqid(),
+                'snippet' => uniqid(),
+                'url' => uniqid(),
+                'jobkey' => uniqid(),
+            ]);
+        }
+
+        return $results;
+    }
+
     public function testItWillUseJsonFormat()
     {
         $format = $this->client->getFormat();
@@ -197,11 +217,12 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
 
     public function testItCanConnect()
     {
-        $listings = ['results' => [
-            ['jobtitle' => uniqid(), 'company' => uniqid()],
-        ]];
+        $jobCount = rand(2,10);
+        $listings = ['results' => $this->getResultItems($jobCount)];
+        $source = $this->client->getSource();
+        $keyword = 'project manager';
 
-        $this->client->setKeyword('project manager')
+        $this->client->setKeyword($keyword)
             ->setCity('Chicago')
             ->setState('IL');
 
@@ -216,5 +237,18 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
         $this->client->setClient($http);
 
         $results = $this->client->getJobs();
+
+        $this->assertCount($jobCount, $results);
+
+        foreach ($listings['results'] as $i => $result) {
+            $this->assertEquals($listings['results'][$i]['jobtitle'], $results->get($i)->title);
+            $this->assertEquals($listings['results'][$i]['company'], $results->get($i)->company);
+            $this->assertEquals($listings['results'][$i]['formattedLocation'], $results->get($i)->location);
+            $this->assertEquals($listings['results'][$i]['snippet'], $results->get($i)->description);
+            $this->assertEquals($listings['results'][$i]['url'], $results->get($i)->url);
+            $this->assertEquals($listings['results'][$i]['jobkey'], $results->get($i)->id);
+            $this->assertEquals($source, $results->get($i)->source);
+            $this->assertEquals($keyword, $results->get($i)->query);
+        }
     }
 }
