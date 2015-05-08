@@ -1,6 +1,23 @@
 # Changelog
 All Notable changes to `jobs-indeed` will be documented in this file
 
+## 0.3.0 - 2015-05-08
+
+### Added
+- Support for SourceId attribute in Job in common v.0.4.0
+
+### Deprecated
+- Id attribute in Job
+
+### Fixed
+- Nothing
+
+### Removed
+- Nothing
+
+### Security
+- Nothing
+
 ## 0.2.0 - 2015-05-02
 
 ### Added
