@@ -66,7 +66,7 @@ class Indeed extends AbstractProvider
             'title' => $payload['jobtitle'],
             'description' => $payload['snippet'],
             'url' => $payload['url'],
-            'id' => $payload['jobkey'],
+            'sourceId' => $payload['jobkey'],
             'company' => $payload['company'],
             'location' => $payload['formattedLocation'],
         ]);

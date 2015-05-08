@@ -248,7 +248,7 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
             $this->assertEquals($listings['results'][$i]['formattedLocation'], $results->get($i)->location);
             $this->assertEquals($listings['results'][$i]['snippet'], $results->get($i)->description);
             $this->assertEquals($listings['results'][$i]['url'], $results->get($i)->url);
-            $this->assertEquals($listings['results'][$i]['jobkey'], $results->get($i)->id);
+            $this->assertEquals($listings['results'][$i]['jobkey'], $results->get($i)->sourceId);
             $this->assertEquals($source, $results->get($i)->source);
             $this->assertEquals($keyword, $results->get($i)->query);
         }
