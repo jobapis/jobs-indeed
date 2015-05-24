@@ -1,6 +1,23 @@
 # Changelog
 All Notable changes to `jobs-indeed` will be documented in this file
 
+## 0.3.1 - 2015-05-24
+
+### Added
+- Dependency on Jobs common v.0.5+
+
+### Deprecated
+- Nothing
+
+### Fixed
+- Nothing
+
+### Removed
+- Nothing
+
+### Security
+- Nothing
+
 ## 0.3.0 - 2015-05-08
 
 ### Added
