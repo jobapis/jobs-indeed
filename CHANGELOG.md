@@ -1,6 +1,23 @@
 # Changelog
 All Notable changes to `jobs-indeed` will be documented in this file
 
+## 0.3.2 - 2015-06-07
+
+### Added
+- Nothing
+
+### Deprecated
+- Nothing
+
+### Fixed
+- Test coverage for Guzzle 6
+
+### Removed
+- Nothing
+
+### Security
+- Nothing
+
 ## 0.3.1 - 2015-05-24
 
 ### Added
