@@ -1,7 +1,7 @@
 # Changelog
 All Notable changes to `jobs-indeed` will be documented in this file
 
-## 0.3.# - 2015-07-04
+## 0.3.3 - 2015-07-04
 
 ### Added
 - Support for version 1.0 release of jobs-common project
