@@ -6,6 +6,8 @@ All Notable changes to `jobs-indeed` will be documented in this file
 ### Added
 - Name field to jobs
 - Using setCompany method to include hiringOrganization Object
+- Date as string
+- Adding setCity and setState method support
 
 ### Deprecated
 - Nothing

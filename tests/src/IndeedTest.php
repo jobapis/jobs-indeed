@@ -29,7 +29,7 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
                 'company' => uniqid(),
                 'formattedLocation' => uniqid(),
                 'source' => uniqid(),
-                'date' => uniqid(),
+                'date' => '2015-07-'.rand(1,31),
                 'snippet' => uniqid(),
                 'url' => uniqid(),
                 'jobkey' => uniqid(),
@@ -268,8 +268,9 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
         return [
             'jobtitle' => uniqid(),
             'company' => uniqid(),
-            'formattedLocation' => uniqid(),
+            'formattedLocation' => uniqid().', '.uniqid(),
             'snippet' => uniqid(),
+            'date' => '2015-07-'.rand(1,31),
             'url' => uniqid(),
             'jobkey' => uniqid(),
         ];

@@ -79,7 +79,17 @@ class Indeed extends AbstractProvider
             'location' => $payload['formattedLocation'],
         ]);
 
-        $job->setCompany($payload['company']);
+        $location = $this->parseLocation($payload['formattedLocation']);
+
+        $job->setCompany($payload['company'])
+            ->setDatePostedAsString($payload['date']);
+
+        if (isset($location[0])) {
+            $job->setCity($location[0]);
+        }
+        if (isset($location[1])) {
+            $job->setState($location[1]);
+        }
 
         return $job;
     }
@@ -173,5 +183,15 @@ class Indeed extends AbstractProvider
     public function getVerb()
     {
         return 'GET';
+    }
+
+    /**
+     * Parse city and state from string given by API
+     *
+     * @return array
+     */
+    public function parseLocation($location)
+    {
+        return explode(', ', $location);
     }
 }
