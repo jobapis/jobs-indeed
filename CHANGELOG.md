@@ -1,6 +1,24 @@
 # Changelog
 All Notable changes to `jobs-indeed` will be documented in this file
 
+## 0.3.4 - 2015-07-25
+
+### Added
+- Name field to jobs
+- Using setCompany method to include hiringOrganization Object
+
+### Deprecated
+- Nothing
+
+### Fixed
+- Nothing
+
+### Removed
+- Nothing
+
+### Security
+- Nothing
+
 ## 0.3.3 - 2015-07-04
 
 ### Added
