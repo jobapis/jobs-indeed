@@ -1,6 +1,23 @@
 # Changelog
 All Notable changes to `jobs-indeed` will be documented in this file
 
+## 0.3.5 - 2015-07-27
+
+### Added
+- Improve code quality
+
+### Deprecated
+- Nothing
+
+### Fixed
+- Nothing
+
+### Removed
+- Nothing
+
+### Security
+- Nothing
+
 ## 0.3.4 - 2015-07-25
 
 ### Added
