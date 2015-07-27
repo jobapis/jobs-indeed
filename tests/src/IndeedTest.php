@@ -224,12 +224,13 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
         $payload = $this->createJobArray();
         $results = $this->client->createJobObject($payload);
 
-        $this->assertEquals($payload['jobtitle'], $results->title);
-        $this->assertEquals($payload['snippet'], $results->description);
-        $this->assertEquals($payload['company'], $results->company);
-        $this->assertEquals($payload['url'], $results->url);
-        $this->assertEquals($payload['jobkey'], $results->sourceId);
-        $this->assertEquals($payload['formattedLocation'], $results->location);
+        $this->assertEquals($payload['jobtitle'], $results->getTitle());
+        $this->assertEquals($payload['jobtitle'], $results->getName());
+        $this->assertEquals($payload['snippet'], $results->getDescription());
+        $this->assertEquals($payload['company'], $results->getCompanyName());
+        $this->assertEquals($payload['url'], $results->getUrl());
+        $this->assertEquals($payload['jobkey'], $results->getSourceId());
+        $this->assertEquals($payload['formattedLocation'], $results->getLocation());
     }
 
     public function testItCanConnect()

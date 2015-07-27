@@ -33,6 +33,15 @@ class Indeed extends AbstractProvider
     protected $queryParams = [];
 
     /**
+     * Job defaults
+     *
+     * @var array
+     */
+    protected $jobDefaults = ['jobtitle','company','formattedLocation','source',
+        'date','snippet','url','jobkey'
+    ];
+
+    /**
      * Add query params, if valid
      *
      * @param string $value
@@ -57,20 +66,26 @@ class Indeed extends AbstractProvider
      */
     public function createJobObject($payload)
     {
-        $defaults = [
-            'jobtitle',
-            'company',
-            'formattedLocation',
-            'source',
-            'date',
-            'snippet',
-            'url',
-            'jobkey'
-        ];
+        $payload = static::parseAttributeDefaults($payload, $this->jobDefaults);
 
-        $payload = static::parseAttributeDefaults($payload, $defaults);
+        $job = $this->createJobFromPayload($payload);
 
-        $job = new Job([
+        $job = $this->setJobLocation($job, $payload['formattedLocation']);
+
+        return $job->setCompany($payload['company'])
+            ->setDatePostedAsString($payload['date']);
+    }
+
+    /**
+     * Create new job from given payload
+     *
+     * @param  array $payload
+     *
+     * @return Job
+     */
+    protected function createJobFromPayload($payload = [])
+    {
+        return new Job([
             'title' => $payload['jobtitle'],
             'name' => $payload['jobtitle'],
             'description' => $payload['snippet'],
@@ -78,20 +93,6 @@ class Indeed extends AbstractProvider
             'sourceId' => $payload['jobkey'],
             'location' => $payload['formattedLocation'],
         ]);
-
-        $location = $this->parseLocation($payload['formattedLocation']);
-
-        $job->setCompany($payload['company'])
-            ->setDatePostedAsString($payload['date']);
-
-        if (isset($location[0])) {
-            $job->setCity($location[0]);
-        }
-        if (isset($location[1])) {
-            $job->setState($location[1]);
-        }
-
-        return $job;
     }
 
     /**
@@ -193,5 +194,27 @@ class Indeed extends AbstractProvider
     public function parseLocation($location)
     {
         return explode(', ', $location);
+    }
+
+    /**
+     * Attempt to parse and add location to Job
+     *
+     * @param Job     $job
+     * @param string  $location
+     *
+     * @return  Job
+     */
+    private function setJobLocation(Job $job, $location)
+    {
+        $location = $this->parseLocation($location);
+
+        if (isset($location[0])) {
+            $job->setCity($location[0]);
+        }
+        if (isset($location[1])) {
+            $job->setState($location[1]);
+        }
+
+        return $job;
     }
 }
