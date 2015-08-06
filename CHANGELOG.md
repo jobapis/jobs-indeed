@@ -1,6 +1,24 @@
 # Changelog
 All Notable changes to `jobs-indeed` will be documented in this file
 
+## 0.3.6 - 2015-08-05
+
+### Added
+- Nothing
+
+### Deprecated
+- Nothing
+
+### Fixed
+- Nothing
+
+### Removed
+- getParameters method, now implemented by AbstractProvider
+- parseLocation method, now statically implemented by AbstractProvider
+
+### Security
+- Nothing
+
 ## 0.3.5 - 2015-07-27
 
 ### Added
