@@ -60,14 +60,6 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('results', $path);
     }
 
-    public function testItWillProvideEmptyParameters()
-    {
-        $parameters = $this->client->getParameters();
-
-        $this->assertEmpty($parameters);
-        $this->assertTrue(is_array($parameters));
-    }
-
     public function testUrlIncludesHighlightWhenProvided()
     {
         $param = 'highlight='.$this->params['highlight'];

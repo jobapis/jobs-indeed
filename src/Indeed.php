@@ -132,16 +132,6 @@ class Indeed extends AbstractProvider
     }
 
     /**
-     * Get parameters
-     *
-     * @return  array
-     */
-    public function getParameters()
-    {
-        return [];
-    }
-
-    /**
      * Get query string for client based on properties
      *
      * @return string
@@ -187,16 +177,6 @@ class Indeed extends AbstractProvider
     }
 
     /**
-     * Parse city and state from string given by API
-     *
-     * @return array
-     */
-    public function parseLocation($location)
-    {
-        return explode(', ', $location);
-    }
-
-    /**
      * Attempt to parse and add location to Job
      *
      * @param Job     $job
@@ -206,7 +186,7 @@ class Indeed extends AbstractProvider
      */
     private function setJobLocation(Job $job, $location)
     {
-        $location = $this->parseLocation($location);
+        $location = static::parseLocation($location);
 
         if (isset($location[0])) {
             $job->setCity($location[0]);
