@@ -7,7 +7,8 @@
 [![Quality Score](https://img.shields.io/scrutinizer/g/JobBrander/jobs-indeed.svg?style=flat-square)](https://scrutinizer-ci.com/g/JobBrander/jobs-indeed)
 [![Total Downloads](https://img.shields.io/packagist/dt/jobbrander/jobs-indeed.svg?style=flat-square)](https://packagist.org/packages/jobbrander/jobs-indeed)
 
-This package provides Indeed Jobs API support for the JobBrander's [Jobs Client](https://github.com/JobBrander/jobs-common).
+This package provides [Indeed Jobs API](https://ads.indeed.com/jobroll/xmlfeed)
+support for the JobBrander's [Jobs Client](https://github.com/JobBrander/jobs-common).
 
 ## Installation
 
@@ -29,10 +30,10 @@ $client = new JobBrander\Jobs\Client\Provider\Indeed([
 ]);
 
 // Search for 200 job listings for 'project manager' in Chicago, IL
-$jobs = $client->setKeyword('project manager')
-    ->setCity('Chicago')
-    ->setState('IL')
-    ->setCount(200)
+$jobs = $client->setKeyword('project manager') // Query. By default terms are ANDed. To see what is possible, use the [advanced search page](http://www.indeed.com/advanced_search) to perform a search and then check the url for the q value.
+    ->setCity('Chicago')        // Location uses a postal code or a "city, state/province/region" combination
+    ->setState('IL')            // Location uses a postal code or a "city, state/province/region" combination
+    ->setCount(200)             // Maximum number of results returned per query. Default is 10
     ->getJobs();
 ```
 
