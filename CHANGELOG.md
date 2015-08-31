@@ -1,6 +1,23 @@
 # Changelog
 All Notable changes to `jobs-indeed` will be documented in this file
 
+## 0.4.0 - 2015-08-31
+
+### Added
+- Support for all query parameters available on the Indeed `http://api.indeed.com/ads/apisearch` resource
+
+### Deprecated
+- Nothing
+
+### Fixed
+- Nothing
+
+### Removed
+- Nothing
+
+### Security
+- Nothing
+
 ## 0.3.6 - 2015-08-05
 
 ### Added

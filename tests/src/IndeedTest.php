@@ -1,21 +1,21 @@
 <?php namespace JobBrander\Jobs\Client\Providers\Test;
 
+use JobBrander\Jobs\Client\Collection;
+use JobBrander\Jobs\Client\Job;
 use JobBrander\Jobs\Client\Providers\Indeed;
+
 use Mockery as m;
 
 class IndeedTest extends \PHPUnit_Framework_TestCase
 {
-    private $clientClass = 'JobBrander\Jobs\Client\Providers\AbstractProvider';
-    private $collectionClass = 'JobBrander\Jobs\Client\Collection';
-    private $jobClass = 'JobBrander\Jobs\Client\Job';
-
     public function setUp()
     {
         $this->params = [
-            'publisherId' => '12345667',
-            'version' => 2,
+            'publisher' => '12345667',
+            'v' => 2,
             'highlight' => 0,
         ];
+
         $this->client = new Indeed($this->params);
     }
 
@@ -29,7 +29,7 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
                 'company' => uniqid(),
                 'formattedLocation' => uniqid(),
                 'source' => uniqid(),
-                'date' => '2015-07-'.rand(1,31),
+                'date' => '2015-07-'.rand(1, 31),
                 'snippet' => uniqid(),
                 'url' => uniqid(),
                 'jobkey' => uniqid(),
@@ -39,11 +39,38 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
         return $results;
     }
 
-    public function testItWillUseJsonFormat()
+    public function testDefaultUrlAfterConfig()
+    {
+        $url = $this->client->getUrl();
+
+        $this->assertContains('publisher='.$this->params['publisher'], $url);
+        $this->assertContains('v='.$this->params['v'], $url);
+        $this->assertContains('highlight='.$this->params['highlight'], $url);
+    }
+
+    public function testItWillUseJsonFormatWhenFormatNotProvided()
     {
         $format = $this->client->getFormat();
 
         $this->assertEquals('json', $format);
+    }
+
+    public function testItWillUseJsonFormatWhenInvalidFormatProvided()
+    {
+        $formatAttempt = uniqid();
+
+        $format = $this->client->setFormat($formatAttempt)->getFormat();
+
+        $this->assertEquals('json', $format);
+    }
+
+    public function testItWillUseXmlFormatWhenProvided()
+    {
+        $formatAttempt = 'xml';
+
+        $format = $this->client->setFormat($formatAttempt)->getFormat();
+
+        $this->assertEquals($formatAttempt, $format);
     }
 
     public function testItWillUseGetHttpVerb()
@@ -60,155 +87,157 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('results', $path);
     }
 
-    public function testUrlIncludesHighlightWhenProvided()
+    public function testUrlContainsSearchParametersWhenProvided()
     {
-        $param = 'highlight='.$this->params['highlight'];
+        $client = new \ReflectionClass(Indeed::class);
+        $property = $client->getProperty("queryMap");
+        $property->setAccessible(true);
+        $queryMap = $property->getValue($this->client);
 
+        $queryParameters = array_values($queryMap);
+        $params = [];
+        $skipParams = ['filter', 'latlong'];
+
+        array_map(function ($item) use (&$params, $skipParams) {
+            if (!in_array($item, $skipParams)) {
+                $params[$item] = uniqid();
+            }
+        }, $queryParameters);
+
+        $newClient = new Indeed(array_merge($this->params, $params));
+
+        $url = $newClient->getUrl();
+
+        array_walk($params, function ($v, $k) use ($url) {
+            $this->assertContains($k.'='.$v, $url);
+        });
+    }
+
+    public function testUrlContainsSearchParametersWhenSet()
+    {
+        $client = new \ReflectionClass(Indeed::class);
+        $property = $client->getProperty("queryMap");
+        $property->setAccessible(true);
+        $queryMap = $property->getValue($this->client);
+        $skipParams = ['filter', 'latlong'];
+
+        array_walk($queryMap, function ($v, $k) use ($skipParams) {
+            if (!in_array($v, $skipParams)) {
+                $value = uniqid();
+                $url = $this->client->$k($value)->getUrl();
+
+                $this->assertContains($v.'='.$value, $url);
+            }
+        });
+    }
+
+    public function testItCannotRetriveLocationWhenLocationNotProvided()
+    {
+        $location = $this->client->getLocation();
         $url = $this->client->getUrl();
 
-        $this->assertContains($param, $url);
+        $this->assertNull($location);
+        $this->assertNotContains('l=', $url);
     }
 
-    public function testUrlNotIncludesHighlightWhenNotProvided()
+    public function testItCanRetriveLocationWhenCityProvided()
     {
-        $param = 'highlight=';
+        $city = uniqid();
 
-        $url = $this->client->setHighlight(null)->getUrl();
-
-        $this->assertNotContains($param, $url);
-    }
-
-    public function testUrlIncludesKeywordWhenProvided()
-    {
-        $keyword = uniqid().' '.uniqid();
-        $param = 'q='.urlencode($keyword);
-
-        $url = $this->client->setKeyword($keyword)->getUrl();
-
-        $this->assertContains($param, $url);
-    }
-
-    public function testUrlNotIncludesKeywordWhenNotProvided()
-    {
-        $param = 'q=';
-
+        $location = $this->client->setCity($city)->getLocation();
         $url = $this->client->getUrl();
 
-        $this->assertNotContains($param, $url);
+        $this->assertEquals($city, $location);
+        $this->assertContains('l='.$city, $url);
     }
 
-    public function testUrlIncludesLocationWhenCityAndStateProvided()
+    public function testItCanRetriveLocationWhenStateProvided()
+    {
+        $state = uniqid();
+
+        $location = $this->client->setState($state)->getLocation();
+        $url = $this->client->getUrl();
+
+        $this->assertEquals($state, $location);
+        $this->assertContains('l='.$state, $url);
+    }
+
+    public function testItCanRetriveLocationWhenCityAndStateProvided()
     {
         $city = uniqid();
         $state = uniqid();
-        $param = 'l='.urlencode($city.', '.$state);
 
-        $url = $this->client->setCity($city)->setState($state)->getUrl();
-
-        $this->assertContains($param, $url);
-    }
-
-    public function testUrlIncludesLocationWhenCityProvided()
-    {
-        $city = uniqid();
-        $param = 'l='.urlencode($city);
-
-        $url = $this->client->setCity($city)->getUrl();
-
-        $this->assertContains($param, $url);
-    }
-
-    public function testUrlIncludesLocationWhenStateProvided()
-    {
-        $state = uniqid();
-        $param = 'l='.urlencode($state);
-
-        $url = $this->client->setState($state)->getUrl();
-
-        $this->assertContains($param, $url);
-    }
-
-    public function testUrlNotIncludesLocationWhenNotProvided()
-    {
-        $param = 'l=';
-
+        $location = $this->client->setCity($city)->setState($state)->getLocation();
         $url = $this->client->getUrl();
 
-        $this->assertNotContains($param, $url);
+        $this->assertEquals($city.', '.$state, $location);
+        $this->assertContains('l='.urlencode($city.', '.$state), $url);
     }
 
-    public function testUrlIncludesLimitWhenProvided()
+    public function testUrlContainsFilterEqualToOneWhenTruthyOptionsProvided()
     {
-        $limit = uniqid();
-        $param = 'limit='.$limit;
+        $options = [1, -2, 'foo', 2.3e5, true, array(2), "false"];
 
-        $url = $this->client->setCount($limit)->getUrl();
+        array_map(function ($option) {
+            $url = $this->client->filterDuplicates($option)->getUrl();
 
-        $this->assertContains($param, $url);
+            $this->assertContains('filter=1', $url);
+        }, $options);
     }
 
-    public function testUrlNotIncludesLimitWhenNotProvided()
+    public function testUrlContainsFilterEqualTo0WhenFalseyOptionsProvided()
     {
-        $param = 'limit=';
+        $options = [0, '', false, array(), null];
 
-        $url = $this->client->setCount(null)->getUrl();
+        array_map(function ($option) {
+            $url = $this->client->filterDuplicates($option)->getUrl();
 
-        $this->assertNotContains($param, $url);
+            $this->assertNotContains('filter', $url);
+        }, $options);
     }
 
-    public function testUrlIncludesPublisherWhenProvided()
+    public function testUrlContainsLatLongEqualToOneWhenTruthyOptionsProvided()
     {
-        $param = 'publisher='.$this->params['publisherId'];
+        $options = [1, -2, 'foo', 2.3e5, true, array(2), "false"];
 
-        $url = $this->client->getUrl();
+        array_map(function ($option) {
+            $url = $this->client->includeLatLong($option)->getUrl();
 
-        $this->assertContains($param, $url);
+            $this->assertContains('latlong=1', $url);
+        }, $options);
     }
 
-    public function testUrlNotIncludesPublisherWhenNotProvided()
+    public function testUrlContainsLatLongEqualTo0WhenFalseyOptionsProvided()
     {
-        $param = 'publisher=';
+        $options = [0, '', false, array(), null];
 
-        $url = $this->client->setPublisherId(null)->getUrl();
+        array_map(function ($option) {
+            $url = $this->client->includeLatLong($option)->getUrl();
 
-        $this->assertNotContains($param, $url);
+            $this->assertNotContains('latlong', $url);
+        }, $options);
     }
 
-    public function testUrlIncludesStartWhenProvided()
+    public function testItWillIncludeUserIpIfAvailableAndNotProvided()
     {
-        $page = uniqid();
-        $param = 'start='.$page;
+        $ip = uniqid();
+        $_SERVER['REMOTE_ADDR'] = $ip;
+        $client = new Indeed;
 
-        $url = $this->client->setPage($page)->getUrl();
+        $url = $client->getUrl();
 
-        $this->assertContains($param, $url);
+        $this->assertContains('userip='.$ip, $url);
     }
 
-    public function testUrlNotIncludesStartWhenNotProvided()
+    public function testItWillIncludeUserAgentIfAvailableAndNotProvided()
     {
-        $param = 'start=';
+        $agent = uniqid();
+        $_SERVER['HTTP_USER_AGENT'] = $agent;
+        $client = new Indeed;
 
-        $url = $this->client->setPage(null)->getUrl();
+        $url = $client->getUrl();
 
-        $this->assertNotContains($param, $url);
-    }
-
-    public function testUrlIncludesVersionWhenProvided()
-    {
-        $param = 'v='.$this->params['version'];
-
-        $url = $this->client->getUrl();
-
-        $this->assertContains($param, $url);
-    }
-
-    public function testUrlNotIncludesVersionWhenNotProvided()
-    {
-        $param = 'v=';
-
-        $url = $this->client->setVersion(null)->getUrl();
-
-        $this->assertNotContains($param, $url);
+        $this->assertContains('useragent='.$agent, $url);
     }
 
     public function testItCanCreateJobFromPayload()
@@ -235,7 +264,7 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
 
         $responseBody = json_encode($payload);
 
-        $job = m::mock($this->jobClass);
+        $job = m::mock(Job::class);
         $job->shouldReceive('setQuery')->with($provider['keyword'])
             ->times($provider['jobs_count'])->andReturnSelf();
         $job->shouldReceive('setSource')->with($provider['source'])
@@ -253,17 +282,18 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
 
         $results = $this->client->getJobs();
 
-        $this->assertInstanceOf($this->collectionClass, $results);
+        $this->assertInstanceOf(Collection::class, $results);
         $this->assertCount($provider['jobs_count'], $results);
     }
 
-    private function createJobArray() {
+    private function createJobArray()
+    {
         return [
             'jobtitle' => uniqid(),
             'company' => uniqid(),
             'formattedLocation' => uniqid().', '.uniqid(),
             'snippet' => uniqid(),
-            'date' => '2015-07-'.rand(1,31),
+            'date' => '2015-07-'.rand(1, 31),
             'url' => uniqid(),
             'jobkey' => uniqid(),
         ];
@@ -277,9 +307,10 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
             'keyword' => uniqid(),
             'source' => uniqid(),
             'params' => [uniqid()],
-            'jobs_count' => rand(2,10),
+            'jobs_count' => rand(2, 10),
 
         ];
+
         return array_replace($defaults, $attributes);
     }
 }
