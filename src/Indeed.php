@@ -5,32 +5,58 @@ use JobBrander\Jobs\Client\Job;
 class Indeed extends AbstractProvider
 {
     /**
-     * Publisher Id
+     * Map of setter methods to query parameters
      *
-     * @var string
+     * @var array
      */
-    protected $publisherId;
-
-    /**
-     * Version
-     *
-     * @var string
-     */
-    protected $version;
-
-    /**
-     * Highlight
-     *
-     * @var string
-     */
-    protected $highlight;
+    protected $queryMap = [
+        'setPublisher' => 'publisher',
+        'setVersion' => 'v',
+        'setFormat' => 'format',
+        'setKeyword' => 'q',
+        'setLocation' => 'l',
+        'setSort' => 'sort',
+        'setRadius' => 'radius',
+        'setSiteType' => 'st',
+        'setJobType' => 'jt',
+        'setPage' => 'start',
+        'setCount' => 'limit',
+        'setDaysBack' => 'fromage',
+        'setHighlight' => 'highlight',
+        'filterDuplicates' => 'filter',
+        'includeLatLong' => 'latlong',
+        'setCountry' => 'co',
+        'setChannel' => 'chnl',
+        'setUserIp' => 'userip',
+        'setUserAgent' => 'useragent',
+    ];
 
     /**
      * Query params
      *
      * @var array
      */
-    protected $queryParams = [];
+    protected $queryParams = [
+        'publisher' => null,
+        'v' => '2',
+        'format' => null,
+        'q' => null,
+        'l' => null,
+        'sort' => null,
+        'radius' => null,
+        'st' => null,
+        'jt' => null,
+        'start' => null,
+        'limit' => null,
+        'fromage' => null,
+        'highlight' => null,
+        'filter' => null,
+        'latlong' => null,
+        'co' => null,
+        'chnl' => null,
+        'userip' => null,
+        'useragent' => null,
+    ];
 
     /**
      * Job defaults
@@ -41,20 +67,57 @@ class Indeed extends AbstractProvider
         'date','snippet','url','jobkey'
     ];
 
+
     /**
-     * Add query params, if valid
+     * Create new indeed jobs client.
      *
-     * @param string $value
-     * @param string $key
-     *
-     * @return  void
+     * @param array $parameters
      */
-    private function addToQueryStringIfValid($value, $key)
+    public function __construct($parameters = [])
     {
-        $computed_value = $this->$value();
-        if (!is_null($computed_value)) {
-            $this->queryParams[$key] = $computed_value;
+        parent::__construct($parameters);
+
+        $this->addDefaultUserInformationToParameters($parameters);
+
+        array_walk($parameters, [$this, 'updateQuery']);
+    }
+
+    /**
+     * Magic method to handle get and set methods for properties
+     *
+     * @param  string $method
+     * @param  array  $parameters
+     *
+     * @return mixed
+     */
+    public function __call($method, $parameters)
+    {
+        if (isset($this->queryMap[$method], $parameters[0])) {
+            $this->updateQuery($parameters[0], $this->queryMap[$method]);
         }
+
+        return parent::__call($method, $parameters);
+    }
+
+    /**
+     * Attempts to apply default user information to parameters when none provided.
+     *
+     * @param array  $parameters
+     *
+     * @return void
+     */
+    protected function addDefaultUserInformationToParameters(&$parameters = [])
+    {
+        $defaultKeys = [
+            'userip' => 'REMOTE_ADDR',
+            'useragent' => 'HTTP_USER_AGENT',
+        ];
+
+        array_walk($defaultKeys, function ($value, $key) use (&$parameters) {
+            if (!isset($parameters[$key]) && isset($_SERVER[$value])) {
+                $parameters[$key] = $_SERVER[$value];
+            }
+        });
     }
 
     /**
@@ -96,12 +159,34 @@ class Indeed extends AbstractProvider
     }
 
     /**
+     * Updates query params to include integer representation of boolean value
+     * to filter results for duplicates or not.
+     *
+     * @param  mixed  $value
+     *
+     * @return Indeed
+     */
+    public function filterDuplicates($value)
+    {
+        $filter = (bool) $value ? '1' : null;
+
+        return $this->updateQuery($filter, 'filter');
+    }
+
+    /**
      * Get data format
      *
      * @return string
      */
     public function getFormat()
     {
+        $validFormats = ['json', 'xml'];
+
+        if (isset($this->queryParams['format'])
+            && in_array(strtolower($this->queryParams['format']), $validFormats)) {
+            return strtolower($this->queryParams['format']);
+        }
+
         return 'json';
     }
 
@@ -122,7 +207,9 @@ class Indeed extends AbstractProvider
      */
     public function getLocation()
     {
-        $location = ($this->city ? $this->city.', ' : null).($this->state ?: null);
+        $locationArray = array_filter([$this->city, $this->state]);
+
+        $location = implode(', ', $locationArray);
 
         if ($location) {
             return $location;
@@ -138,18 +225,11 @@ class Indeed extends AbstractProvider
      */
     public function getQueryString()
     {
-        $query_params = [
-            'publisher' => 'getPublisherId',
-            'v' => 'getVersion',
-            'highlight' => 'getHighlight',
-            'format' => 'getFormat',
-            'q' => 'getKeyword',
-            'l' => 'getLocation',
-            'start' => 'getPage',
-            'limit' => 'getCount',
-        ];
+        $location = $this->getLocation();
 
-        array_walk($query_params, [$this, 'addToQueryStringIfValid']);
+        if (!empty($location)) {
+            $this->updateQuery($location, 'l');
+        }
 
         return http_build_query($this->queryParams);
     }
@@ -161,9 +241,7 @@ class Indeed extends AbstractProvider
      */
     public function getUrl()
     {
-        $query_string = $this->getQueryString();
-
-        return 'http://api.indeed.com/ads/apisearch?'.$query_string;
+        return 'http://api.indeed.com/ads/apisearch?'.$this->getQueryString();
     }
 
     /**
@@ -174,6 +252,21 @@ class Indeed extends AbstractProvider
     public function getVerb()
     {
         return 'GET';
+    }
+
+    /**
+     * Updates query params to include integer representation of boolean value
+     * to include lattitude and longitud in results.
+     *
+     * @param  mixed  $value
+     *
+     * @return Indeed
+     */
+    public function includeLatLong($value)
+    {
+        $latlong = (bool) $value ? '1' : null;
+
+        return $this->updateQuery($latlong, 'latlong');
     }
 
     /**
@@ -196,5 +289,22 @@ class Indeed extends AbstractProvider
         }
 
         return $job;
+    }
+
+    /**
+     * Attempts to update current query parameters.
+     *
+     * @param  string  $value
+     * @param  string  $key
+     *
+     * @return Indeed
+     */
+    protected function updateQuery($value, $key)
+    {
+        if (array_key_exists($key, $this->queryParams)) {
+            $this->queryParams[$key] = $value;
+        }
+
+        return $this;
     }
 }
