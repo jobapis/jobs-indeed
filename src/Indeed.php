@@ -5,24 +5,35 @@ use JobBrander\Jobs\Client\Job;
 class Indeed extends AbstractProvider
 {
     /**
+     * Base API Url
+     *
+     * @var string
+     */
+    protected $baseUrl = 'http://api.indeed.com/ads/apisearch?';
+
+    /**
+     * Job defaults
+     *
+     * @var array
+     */
+    protected $jobDefaults = ['jobtitle','company','formattedLocation','source',
+        'date','snippet','url','jobkey'
+    ];
+
+    /**
      * Map of setter methods to query parameters
      *
      * @var array
      */
     protected $queryMap = [
-        'setPublisher' => 'publisher',
         'setVersion' => 'v',
-        'setFormat' => 'format',
         'setKeyword' => 'q',
         'setLocation' => 'l',
-        'setSort' => 'sort',
-        'setRadius' => 'radius',
         'setSiteType' => 'st',
         'setJobType' => 'jt',
         'setPage' => 'start',
         'setCount' => 'limit',
         'setDaysBack' => 'fromage',
-        'setHighlight' => 'highlight',
         'filterDuplicates' => 'filter',
         'includeLatLong' => 'latlong',
         'setCountry' => 'co',
@@ -59,14 +70,13 @@ class Indeed extends AbstractProvider
     ];
 
     /**
-     * Job defaults
+     * Required params
      *
      * @var array
      */
-    protected $jobDefaults = ['jobtitle','company','formattedLocation','source',
-        'date','snippet','url','jobkey'
+    protected $requiredParams = [
+        'publisher',
     ];
-
 
     /**
      * Create new indeed jobs client.
@@ -75,28 +85,8 @@ class Indeed extends AbstractProvider
      */
     public function __construct($parameters = [])
     {
-        parent::__construct($parameters);
-
         $this->addDefaultUserInformationToParameters($parameters);
-
-        array_walk($parameters, [$this, 'updateQuery']);
-    }
-
-    /**
-     * Magic method to handle get and set methods for properties
-     *
-     * @param  string $method
-     * @param  array  $parameters
-     *
-     * @return mixed
-     */
-    public function __call($method, $parameters)
-    {
-        if (isset($this->queryMap[$method], $parameters[0])) {
-            $this->updateQuery($parameters[0], $this->queryMap[$method]);
-        }
-
-        return parent::__call($method, $parameters);
+        parent::__construct($parameters);
     }
 
     /**
@@ -191,6 +181,16 @@ class Indeed extends AbstractProvider
     }
 
     /**
+     * Get keyword for search query
+     *
+     * @return string Should return the value of the parameter describing this query
+     */
+    public function getKeyword()
+    {
+        return 'q';
+    }
+
+    /**
      * Get listings path
      *
      * @return  string
@@ -198,50 +198,6 @@ class Indeed extends AbstractProvider
     public function getListingsPath()
     {
         return 'results';
-    }
-
-    /**
-     * Get combined location
-     *
-     * @return string
-     */
-    public function getLocation()
-    {
-        $locationArray = array_filter([$this->city, $this->state]);
-
-        $location = implode(', ', $locationArray);
-
-        if ($location) {
-            return $location;
-        }
-
-        return null;
-    }
-
-    /**
-     * Get query string for client based on properties
-     *
-     * @return string
-     */
-    public function getQueryString()
-    {
-        $location = $this->getLocation();
-
-        if (!empty($location)) {
-            $this->updateQuery($location, 'l');
-        }
-
-        return http_build_query($this->queryParams);
-    }
-
-    /**
-     * Get url
-     *
-     * @return  string
-     */
-    public function getUrl()
-    {
-        return 'http://api.indeed.com/ads/apisearch?'.$this->getQueryString();
     }
 
     /**
@@ -289,22 +245,5 @@ class Indeed extends AbstractProvider
         }
 
         return $job;
-    }
-
-    /**
-     * Attempts to update current query parameters.
-     *
-     * @param  string  $value
-     * @param  string  $key
-     *
-     * @return Indeed
-     */
-    protected function updateQuery($value, $key)
-    {
-        if (array_key_exists($key, $this->queryParams)) {
-            $this->queryParams[$key] = $value;
-        }
-
-        return $this;
     }
 }

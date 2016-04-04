@@ -1,6 +1,23 @@
 # Changelog
 All Notable changes to `jobs-indeed` will be documented in this file
 
+## 1.0.0 - 2016-04-03
+
+### Added
+- Support for v.2 of jobs-common package
+
+### Deprecated
+- Nothing
+
+### Fixed
+- Nothing
+
+### Removed
+- `setCity` and `setState` methods
+
+### Security
+- Nothing
+
 ## 0.4.0 - 2015-08-31
 
 ### Added

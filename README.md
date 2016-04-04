@@ -32,9 +32,7 @@ $client = new JobBrander\Jobs\Client\Provider\Indeed([
 $jobs = $client
     ->setKeyword('project manager')                 // Query. By default terms are ANDed. To see what is possible, use the [advanced search page](http://www.indeed.com/advanced_search) to perform a search and then check the url for the q value.
     ->setFormat('json')                             // Format. Which output format of the API you wish to use. The options are "xml" and "json". If omitted or invalid, the json format is used.
-    ->setCity('Chicago')                            // City.
-    ->setState('IL')                                // State.
-    ->setLocation('Chicago, IL')                    // Location. Use a postal code or a "city, state/province/region" combination. Will overwrite any changes made using setCity and setState
+    ->setLocation('Chicago, IL')                    // Location. Use a postal code or a "city, state/province/region" combination.
     ->setSort('date')                               // Sort by relevance or date. Default is relevance.
     ->setRadius('100')                              // Distance from search location ("as the crow flies"). Default is 25.
     ->setSiteType('jobsite')                        // Site type. To show only jobs from job boards use "jobsite". For jobs from direct employer websites use "employer".

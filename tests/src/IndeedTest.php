@@ -19,6 +19,22 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
         $this->client = new Indeed($this->params);
     }
 
+    public function testItCanRetreiveResults()
+    {
+        if (!getenv('LIVE')) {
+            $this->markTestSkipped('LIVE variable not set. Real API call will not be made.');
+        }
+
+        $keyword = 'engineering';
+        $this->client->setKeyword($keyword);
+        $results = $this->client->getJobs();
+
+        $this->assertInstanceOf($this->collectionClass, $results);
+        foreach($results as $job) {
+            $this->assertEquals($keyword, $job->query);
+        }
+    }
+
     private function getResultItems($count = 1)
     {
         $results = [];
@@ -133,45 +149,11 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
 
     public function testItCannotRetriveLocationWhenLocationNotProvided()
     {
-        $location = $this->client->getLocation();
+        $location = $this->client->getL();
         $url = $this->client->getUrl();
 
         $this->assertNull($location);
         $this->assertNotContains('l=', $url);
-    }
-
-    public function testItCanRetriveLocationWhenCityProvided()
-    {
-        $city = uniqid();
-
-        $location = $this->client->setCity($city)->getLocation();
-        $url = $this->client->getUrl();
-
-        $this->assertEquals($city, $location);
-        $this->assertContains('l='.$city, $url);
-    }
-
-    public function testItCanRetriveLocationWhenStateProvided()
-    {
-        $state = uniqid();
-
-        $location = $this->client->setState($state)->getLocation();
-        $url = $this->client->getUrl();
-
-        $this->assertEquals($state, $location);
-        $this->assertContains('l='.$state, $url);
-    }
-
-    public function testItCanRetriveLocationWhenCityAndStateProvided()
-    {
-        $city = uniqid();
-        $state = uniqid();
-
-        $location = $this->client->setCity($city)->setState($state)->getLocation();
-        $url = $this->client->getUrl();
-
-        $this->assertEquals($city.', '.$state, $location);
-        $this->assertContains('l='.urlencode($city.', '.$state), $url);
     }
 
     public function testUrlContainsFilterEqualToOneWhenTruthyOptionsProvided()

@@ -19,7 +19,7 @@
     ],
     "require": {
         "php": ">=5.5.0",
-        "jobbrander/jobs-common": "~1.0"
+        "jobbrander/jobs-common": "v2.x-dev"
     },
     "require-dev": {
         "phpunit/phpunit": ">=4.6",
