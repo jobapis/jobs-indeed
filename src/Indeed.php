@@ -86,7 +86,22 @@ class Indeed extends AbstractProvider
     public function __construct($parameters = [])
     {
         $this->addDefaultUserInformationToParameters($parameters);
+        $this->addDefaultFormatToParameters($parameters);
         parent::__construct($parameters);
+    }
+
+    /**
+     * Defaults to json if no format is initially provided
+     *
+     * @param array  $parameters
+     *
+     * @return void
+     */
+    protected function addDefaultFormatToParameters(&$parameters = [])
+    {
+        if (!isset($parameters['format'])) {
+            $parameters['format'] = $this->getFormat();
+        }
     }
 
     /**

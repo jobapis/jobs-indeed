@@ -53,8 +53,14 @@ The `getJobs` method will return a [Collection](https://github.com/JobBrander/jo
 
 ## Testing
 
+To run all tests except for actual API calls
 ``` bash
 $ ./vendor/bin/phpunit
+```
+
+To run all tests including actual API calls
+``` bash
+$ PUBLISHER=<YOUR PUBLISHER ID> ./vendor/bin/phpunit
 ```
 
 ## Contributing

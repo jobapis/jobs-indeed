@@ -19,22 +19,6 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
         $this->client = new Indeed($this->params);
     }
 
-    public function testItCanRetreiveResults()
-    {
-        if (!getenv('LIVE')) {
-            $this->markTestSkipped('LIVE variable not set. Real API call will not be made.');
-        }
-
-        $keyword = 'engineering';
-        $this->client->setKeyword($keyword);
-        $results = $this->client->getJobs();
-
-        $this->assertInstanceOf($this->collectionClass, $results);
-        foreach($results as $job) {
-            $this->assertEquals($keyword, $job->query);
-        }
-    }
-
     private function getResultItems($count = 1)
     {
         $results = [];
@@ -266,6 +250,29 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(Collection::class, $results);
         $this->assertCount($provider['jobs_count'], $results);
+    }
+    /**
+     * @group failing
+     * Tests the api edit form
+     */
+    public function testItCanRetreiveResults()
+    {
+        if (!getenv('PUBLISHER')) {
+            $this->markTestSkipped('PUBLISHER not set. Real API call will not be made.');
+        }
+
+        $client = new Indeed([
+            'publisher' => getenv('PUBLISHER')
+        ]);
+
+        $keyword = 'engineering';
+        $client->setKeyword($keyword);
+        $results = $client->getJobs();
+
+        $this->assertInstanceOf('JobBrander\Jobs\Client\Collection', $results);
+        foreach($results as $job) {
+            $this->assertEquals($keyword, $job->query);
+        }
     }
 
     private function createJobArray()
