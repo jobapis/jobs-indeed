@@ -251,10 +251,7 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(Collection::class, $results);
         $this->assertCount($provider['jobs_count'], $results);
     }
-    /**
-     * @group failing
-     * Tests the api edit form
-     */
+
     public function testItCanRetreiveResults()
     {
         if (!getenv('PUBLISHER')) {
@@ -270,6 +267,7 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
         $results = $client->getJobs();
 
         $this->assertInstanceOf('JobBrander\Jobs\Client\Collection', $results);
+
         foreach($results as $job) {
             $this->assertEquals($keyword, $job->query);
         }

@@ -20,7 +20,7 @@ composer require jobbrander/jobs-indeed
 
 ## Usage
 
-Usage is the same as Job Branders's Jobs Client, using `\JobBrander\Jobs\Client\Provider\Indeed` as the provider.
+Usage is the same as Job Branders's Jobs Client, using `\JobBrander\Jobs\Client\Providers\Indeed` as the provider.
 
 ```php
 $client = new JobBrander\Jobs\Client\Provider\Indeed([
