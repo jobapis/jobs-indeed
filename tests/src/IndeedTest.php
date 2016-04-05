@@ -206,6 +206,16 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('useragent='.$agent, $url);
     }
 
+    /**
+     * @expectedException JobBrander\Jobs\Client\Exceptions\MissingParameterException
+     */
+    public function testItWillThrowExceptionWhenPublisherNotProvided()
+    {
+        $client = new Indeed;
+
+        $results = $client->setKeyword(uniqid())->getJobs();
+    }
+
     public function testItCanCreateJobFromPayload()
     {
         $payload = $this->createJobArray();

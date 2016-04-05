@@ -5,6 +5,8 @@ All Notable changes to `jobs-indeed` will be documented in this file
 
 ### Added
 - Support for v.2 of jobs-common package
+- Automatically format results as `json` to prevent parsing failures
+- Made "publisher" a required parameter to improve useability
 
 ### Deprecated
 - Nothing
