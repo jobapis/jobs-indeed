@@ -133,10 +133,7 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
 
     public function testItCannotRetriveLocationWhenLocationNotProvided()
     {
-        $location = $this->client->getL();
         $url = $this->client->getUrl();
-
-        $this->assertNull($location);
         $this->assertNotContains('l=', $url);
     }
 
