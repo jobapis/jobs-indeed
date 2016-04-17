@@ -225,6 +225,9 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($payload['url'], $results->getUrl());
         $this->assertEquals($payload['jobkey'], $results->getSourceId());
         $this->assertEquals($payload['formattedLocation'], $results->getLocation());
+
+        $locationArray = explode(' ', $payload['formattedLocationFull']);
+        $this->assertEquals($locationArray[2], $results->getPostalCode());
     }
 
     public function testItCanConnect()
@@ -282,10 +285,12 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
 
     private function createJobArray()
     {
+        $formattedLocation = uniqid().', '.uniqid();
         return [
             'jobtitle' => uniqid(),
             'company' => uniqid(),
-            'formattedLocation' => uniqid().', '.uniqid(),
+            'formattedLocation' => $formattedLocation,
+            'formattedLocationFull' => $formattedLocation.' '.uniqid(),
             'snippet' => uniqid(),
             'date' => '2015-07-'.rand(1, 31),
             'url' => uniqid(),

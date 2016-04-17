@@ -16,8 +16,16 @@ class Indeed extends AbstractProvider
      *
      * @var array
      */
-    protected $jobDefaults = ['jobtitle','company','formattedLocation','source',
-        'date','snippet','url','jobkey'
+    protected $jobDefaults = [
+        'jobtitle',
+        'company',
+        'formattedLocation',
+        'formattedLocationFull',
+        'source',
+        'date',
+        'snippet',
+        'url',
+        'jobkey',
     ];
 
     /**
@@ -140,8 +148,11 @@ class Indeed extends AbstractProvider
 
         $job = $this->setJobLocation($job, $payload['formattedLocation']);
 
+        $postalCode = str_replace($payload['formattedLocation'].' ', '', $payload['formattedLocationFull']);
+
         return $job->setCompany($payload['company'])
-            ->setDatePostedAsString($payload['date']);
+            ->setDatePostedAsString($payload['date'])
+            ->setPostalCode($postalCode);
     }
 
     /**
