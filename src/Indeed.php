@@ -26,6 +26,8 @@ class Indeed extends AbstractProvider
         'snippet',
         'url',
         'jobkey',
+        'latitude',
+        'longitude'
     ];
 
     /**
@@ -152,7 +154,9 @@ class Indeed extends AbstractProvider
 
         return $job->setCompany($payload['company'])
             ->setDatePostedAsString($payload['date'])
-            ->setPostalCode($postalCode);
+            ->setPostalCode($postalCode)
+            ->setLatitude($payload['latitude'])
+            ->setLongitude($payload['longitude']);
     }
 
     /**
@@ -238,7 +242,7 @@ class Indeed extends AbstractProvider
 
     /**
      * Updates query params to include integer representation of boolean value
-     * to include lattitude and longitud in results.
+     * to include lattitude and longitude in results.
      *
      * @param  mixed  $value
      *

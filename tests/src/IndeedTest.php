@@ -225,6 +225,8 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($payload['url'], $results->getUrl());
         $this->assertEquals($payload['jobkey'], $results->getSourceId());
         $this->assertEquals($payload['formattedLocation'], $results->getLocation());
+        $this->assertEquals($payload['latitude'], $results->getLatitude());
+        $this->assertEquals($payload['longitude'], $results->getLongitude());
 
         $locationArray = explode(' ', $payload['formattedLocationFull']);
         $this->assertEquals($locationArray[2], $results->getPostalCode());
@@ -273,7 +275,7 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $keyword = 'engineering';
-        $client->setKeyword($keyword);
+        $client->setKeyword($keyword)->includeLatLong(1);
         $results = $client->getJobs();
 
         $this->assertInstanceOf('JobBrander\Jobs\Client\Collection', $results);
@@ -295,6 +297,8 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
             'date' => '2015-07-'.rand(1, 31),
             'url' => uniqid(),
             'jobkey' => uniqid(),
+            'latitude' => uniqid(),
+            'longitude' => uniqid(),
         ];
     }
 
