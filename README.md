@@ -22,6 +22,8 @@ composer require jobbrander/jobs-indeed
 
 Usage is the same as Job Branders's Jobs Client, using `\JobBrander\Jobs\Client\Providers\Indeed` as the provider.
 
+Any of the parameters documented in Indeed's documentation can be used by appending "set" to them. For example, `setQ('query')` would allow you to set the query for an API call. Alternatively, we offer the shortcut methods listed below.
+
 ```php
 $client = new JobBrander\Jobs\Client\Provider\Indeed([
     'publisher' => 'YOUR INDEED PUBLISHER ID',
@@ -37,13 +39,13 @@ $jobs = $client
     ->setRadius('100')                              // Distance from search location ("as the crow flies"). Default is 25.
     ->setSiteType('jobsite')                        // Site type. To show only jobs from job boards use "jobsite". For jobs from direct employer websites use "employer".
     ->setJobType('fulltime')                        // Job type. Allowed values: "fulltime", "parttime", "contract", "internship", "temporary".
-    ->setPage(2)                                    // Start results at this result number, beginning with 0. Default is 0.
-    ->setCount(200)                                 // Maximum number of results returned per query. Default is 10
+    ->setStart(2)                                   // Start results at this result number, beginning with 0. Default is 0.
+    ->setLimit(200)                                 // Maximum number of results returned per query. Default is 10
     ->setDaysBack(10)                               // Number of days back to search.
-    ->filterDuplicates(false)                       // Filter duplicate results. 0 turns off duplicate job filtering. Default is 1.
-    ->includeLatLong(true)                          // If latlong=1, returns latitude and longitude information for each job result. Default is 0.
+    ->setFilterDuplicates(false)                    // Filter duplicate results. 0 turns off duplicate job filtering. Default is 1.
+    ->setIncludeLatLong(true)                       // If latlong=1, returns latitude and longitude information for each job result. Default is 0.
     ->setCountry('us')                              // Search within country specified. Default is us.
-    ->setChannel('channel-one')                     // Channel Name: Group API requests to a specific channel
+    ->setChnl('channel-one')                        // Channel Name: Group API requests to a specific channel
     ->setUserIp($_SERVER['REMOTE_ADDR'])            // The IP number of the end-user to whom the job results will be displayed.
     ->setUserAgent($_SERVER['HTTP_USER_AGENT'])     // The User-Agent (browser) of the end-user to whom the job results will be displayed.
     ->getJobs();

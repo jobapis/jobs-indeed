@@ -115,7 +115,7 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
         $options = [1, -2, 'foo', 2.3e5, true, array(2), "false"];
 
         array_map(function ($option) {
-            $url = $this->client->filterDuplicates($option)->getUrl();
+            $url = $this->client->setFilterDuplicates($option)->getUrl();
 
             $this->assertContains('filter=1', $url);
         }, $options);
@@ -126,7 +126,7 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
         $options = [0, '', false, array(), null];
 
         array_map(function ($option) {
-            $url = $this->client->filterDuplicates($option)->getUrl();
+            $url = $this->client->setFilterDuplicates($option)->getUrl();
 
             $this->assertNotContains('filter', $url);
         }, $options);
@@ -137,7 +137,7 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
         $options = [1, -2, 'foo', 2.3e5, true, array(2), "false"];
 
         array_map(function ($option) {
-            $url = $this->client->includeLatLong($option)->getUrl();
+            $url = $this->client->setIncludeLatLong($option)->getUrl();
 
             $this->assertContains('latlong=1', $url);
         }, $options);
@@ -148,7 +148,7 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
         $options = [0, '', false, array(), null];
 
         array_map(function ($option) {
-            $url = $this->client->includeLatLong($option)->getUrl();
+            $url = $this->client->setIncludeLatLong($option)->getUrl();
 
             $this->assertNotContains('latlong', $url);
         }, $options);
@@ -174,6 +174,36 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
         $url = $client->getUrl();
 
         $this->assertContains('useragent='.$agent, $url);
+    }
+
+    public function testItCanSetAllMethodsInReadme()
+    {
+        $attributes = [
+            'keyword' => uniqid(),
+            'location' => uniqid(),
+            'sort' => uniqid(),
+            'radius' => uniqid(),
+            'siteType' => uniqid(),
+            'jobType' => uniqid(),
+            'start' => rand(1,5),
+            'limit' => rand(1,5),
+            'daysBack' => uniqid(),
+            'filterDuplicates' => rand(0,1),
+            'includeLatLong' => rand(0,1),
+            'country' => uniqid(),
+            'chnl' => uniqid(),
+            'userIp' => uniqid(),
+            'userAgent' => uniqid(),
+        ];
+        $client = new Indeed;
+        // Set all values
+        foreach ($attributes as $key => $val) {
+            $client->{'set'.ucfirst($key)}($val);
+        }
+        // Get all values
+        foreach ($attributes as $key => $val) {
+            $this->assertEquals($val, $client->{'get'.ucfirst($key)}(), "$key was not set or retrieved properly.");
+        }
     }
 
     /**
@@ -248,7 +278,7 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $keyword = 'engineering';
-        $client->setKeyword($keyword)->includeLatLong(1);
+        $client->setKeyword($keyword)->setIncludeLatLong(1);
         $results = $client->getJobs();
 
         $this->assertInstanceOf('JobApis\Jobs\Client\Collection', $results);

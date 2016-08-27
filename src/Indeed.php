@@ -21,6 +21,28 @@ class Indeed extends AbstractProvider
     ];
 
     /**
+     * Returns the standardized job object
+     *
+     * @param array $payload
+     *
+     * @return \JobApis\Jobs\Client\Job
+     */
+    public function createJobObject($payload)
+    {
+        $job = $this->createJobFromPayload($payload);
+
+        $job = $this->setJobLocation($job, $payload['formattedLocation']);
+
+        $postalCode = str_replace($payload['formattedLocation'].' ', '', $payload['formattedLocationFull']);
+
+        return $job->setCompany($payload['company'])
+            ->setDatePostedAsString($payload['date'])
+            ->setPostalCode($postalCode)
+            ->setLatitude($payload['latitude'])
+            ->setLongitude($payload['longitude']);
+    }
+
+    /**
      * Get default parameters and values
      *
      * @return  string
@@ -73,101 +95,53 @@ class Indeed extends AbstractProvider
     }
 
     /**
-     * Get parameters that MUST be set in order to satisfy the APIs requirements
+     * Get country
      *
-     * @return  string
+     * @return string Should return the value of the parameter describing this query
      */
-    public function requiredParameters()
+    public function getCountry()
     {
-        return [
-            'publisher'
-        ];
+        return $this->queryParams['co'];
     }
 
     /**
-     * Get parameters that CAN be set
+     * Get days back to search
      *
-     * @return  string
+     * @return string Should return the value of the parameter describing this query
      */
-    public function validParameters()
+    public function getDaysBack()
     {
-        return [
-            'publisher',
-            'v',
-            'format',
-            'q',
-            'l',
-            'sort',
-            'radius',
-            'st',
-            'jt',
-            'start',
-            'limit',
-            'fromage',
-            'highlight',
-            'filter',
-            'latlong',
-            'co',
-            'chnl',
-            'userip',
-            'useragent',
-        ];
+        return $this->queryParams['fromage'];
     }
 
     /**
-     * Returns the standardized job object
+     * Get filter duplicates
      *
-     * @param array $payload
-     *
-     * @return \JobApis\Jobs\Client\Job
+     * @return string Should return the value of the parameter describing this query
      */
-    public function createJobObject($payload)
+    public function getFilterDuplicates()
     {
-        $job = $this->createJobFromPayload($payload);
-
-        $job = $this->setJobLocation($job, $payload['formattedLocation']);
-
-        $postalCode = str_replace($payload['formattedLocation'].' ', '', $payload['formattedLocationFull']);
-
-        return $job->setCompany($payload['company'])
-            ->setDatePostedAsString($payload['date'])
-            ->setPostalCode($postalCode)
-            ->setLatitude($payload['latitude'])
-            ->setLongitude($payload['longitude']);
+        return $this->queryParams['filter'];
     }
 
     /**
-     * Create new job from given payload
+     * Get include latitude and longitude
      *
-     * @param  array $payload
-     *
-     * @return Job
+     * @return string Should return the value of the parameter describing this query
      */
-    protected function createJobFromPayload($payload = [])
+    public function getIncludeLatLong()
     {
-        return new Job([
-            'title' => $payload['jobtitle'],
-            'name' => $payload['jobtitle'],
-            'description' => $payload['snippet'],
-            'url' => $payload['url'],
-            'sourceId' => $payload['jobkey'],
-            'location' => $payload['formattedLocation'],
-        ]);
+        return $this->queryParams['latlong'];
     }
 
     /**
-     * Updates query params to include integer representation of boolean value
-     * to filter results for duplicates or not.
+     * Get job type
      *
-     * @param  mixed  $value
-     *
-     * @return Indeed
+     * @return string Should return the value of the parameter describing this query
      */
-    public function filterDuplicates($value)
+    public function getJobType()
     {
-        $filter = (bool) $value ? '1' : null;
-
-        return $this->updateQuery($filter, 'filter');
+        return $this->queryParams['jt'];
     }
 
     /**
@@ -181,6 +155,16 @@ class Indeed extends AbstractProvider
     }
 
     /**
+     * Get location for search query
+     *
+     * @return string Should return the value of the parameter describing this query
+     */
+    public function getLocation()
+    {
+        return $this->queryParams['l'];
+    }
+
+    /**
      * Get listings path
      *
      * @return  string
@@ -191,6 +175,84 @@ class Indeed extends AbstractProvider
     }
 
     /**
+     * Get Site type
+     *
+     * @return string Should return the value of the parameter describing this query
+     */
+    public function getSiteType()
+    {
+        return $this->queryParams['st'];
+    }
+
+    /**
+     * Get User IP
+     *
+     * @return string Should return the value of the parameter describing this query
+     */
+    public function getUserIp()
+    {
+        return $this->queryParams['userip'];
+    }
+
+    /**
+     * Get User Agent
+     *
+     * @return string Should return the value of the parameter describing this query
+     */
+    public function getUserAgent()
+    {
+        return $this->queryParams['useragent'];
+    }
+
+    /**
+     * Get parameters that MUST be set in order to satisfy the APIs requirements
+     *
+     * @return  string
+     */
+    public function requiredParameters()
+    {
+        return [
+            'publisher'
+        ];
+    }
+
+    /**
+     * Set Country for query
+     *
+     * @return Indeed
+     */
+    public function setCountry($value)
+    {
+        $this->co = $value;
+        return $this;
+    }
+
+    /**
+     * Set days back for query
+     *
+     * @return Indeed
+     */
+    public function setDaysBack($value)
+    {
+        $this->fromage = $value;
+        return $this;
+    }
+
+    /**
+     * Updates query params to include integer representation of boolean value
+     * to filter results for duplicates or not.
+     *
+     * @param  mixed  $value
+     *
+     * @return Indeed
+     */
+    public function setFilterDuplicates($value)
+    {
+        $this->filter = (bool) $value ? '1' : null;
+        return $this;
+    }
+
+    /**
      * Updates query params to include integer representation of boolean value
      * to include lattitude and longitude in results.
      *
@@ -198,11 +260,21 @@ class Indeed extends AbstractProvider
      *
      * @return Indeed
      */
-    public function includeLatLong($value)
+    public function setIncludeLatLong($value)
     {
-        $latlong = (bool) $value ? '1' : null;
+        $this->latlong = (bool) $value ? '1' : null;
+        return $this;
+    }
 
-        return $this->updateQuery($latlong, 'latlong');
+    /**
+     * Set job type for query
+     *
+     * @return Indeed
+     */
+    public function setJobType($value)
+    {
+        $this->jt = $value;
+        return $this;
     }
 
     /**
@@ -213,6 +285,50 @@ class Indeed extends AbstractProvider
     public function setKeyword($value)
     {
         $this->q = $value;
+        return $this;
+    }
+
+    /**
+     * Set location for search query
+     *
+     * @return Indeed
+     */
+    public function setLocation($value)
+    {
+        $this->l = $value;
+        return $this;
+    }
+
+    /**
+     * Set site type for query
+     *
+     * @return Indeed
+     */
+    public function setSiteType($value)
+    {
+        $this->st = $value;
+        return $this;
+    }
+
+    /**
+     * Set User IP for query
+     *
+     * @return Indeed
+     */
+    public function setUserIp($value)
+    {
+        $this->userip = $value;
+        return $this;
+    }
+
+    /**
+     * Set site type for query
+     *
+     * @return Indeed
+     */
+    public function setUserAgent($value)
+    {
+        $this->useragent = $value;
         return $this;
     }
 
@@ -234,6 +350,35 @@ class Indeed extends AbstractProvider
     public function userIp()
     {
         return isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : null;
+    }
+
+    /**
+     * Get parameters that CAN be set
+     *
+     * @return  string
+     */
+    public function validParameters()
+    {
+        return array_keys($this->defaultParameters());
+    }
+
+    /**
+     * Create new job from given payload
+     *
+     * @param  array $payload
+     *
+     * @return Job
+     */
+    protected function createJobFromPayload($payload = [])
+    {
+        return new Job([
+            'title' => $payload['jobtitle'],
+            'name' => $payload['jobtitle'],
+            'description' => $payload['snippet'],
+            'url' => $payload['url'],
+            'sourceId' => $payload['jobkey'],
+            'location' => $payload['formattedLocation'],
+        ]);
     }
 
     /**

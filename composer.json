@@ -1,5 +1,5 @@
 {
-    "name": "jobbrander/jobs-indeed",
+    "name": "jobapis/jobs-indeed",
     "type": "library",
     "description": "Making it simple to integrate your application with Indeed Jobs API.",
     "keywords": [
