@@ -1,6 +1,6 @@
-<?php namespace JobBrander\Jobs\Client\Providers;
+<?php namespace JobApis\Jobs\Client\Providers;
 
-use JobBrander\Jobs\Client\Job;
+use JobApis\Jobs\Client\Job;
 
 class Indeed extends AbstractProvider
 {
@@ -9,75 +9,7 @@ class Indeed extends AbstractProvider
      *
      * @var string
      */
-    protected $baseUrl = 'http://api.indeed.com/ads/apisearch?';
-
-    /**
-     * Job defaults
-     *
-     * @var array
-     */
-    protected $jobDefaults = [
-        'jobtitle',
-        'company',
-        'formattedLocation',
-        'formattedLocationFull',
-        'source',
-        'date',
-        'snippet',
-        'url',
-        'jobkey',
-        'latitude',
-        'longitude'
-    ];
-
-    /**
-     * Map of setter methods to query parameters
-     *
-     * @var array
-     */
-    protected $queryMap = [
-        'setVersion' => 'v',
-        'setKeyword' => 'q',
-        'setLocation' => 'l',
-        'setSiteType' => 'st',
-        'setJobType' => 'jt',
-        'setPage' => 'start',
-        'setCount' => 'limit',
-        'setDaysBack' => 'fromage',
-        'filterDuplicates' => 'filter',
-        'includeLatLong' => 'latlong',
-        'setCountry' => 'co',
-        'setChannel' => 'chnl',
-        'setUserIp' => 'userip',
-        'setUserAgent' => 'useragent',
-    ];
-
-    /**
-     * Query params
-     *
-     * @var array
-     */
-    protected $queryParams = [
-        'publisher' => null,
-        'v' => '2',
-        'format' => null,
-        'q' => null,
-        'l' => null,
-        'sort' => null,
-        'radius' => null,
-        'st' => null,
-        'jt' => null,
-        'start' => null,
-        'limit' => null,
-        'fromage' => null,
-        'highlight' => null,
-        'filter' => null,
-        'latlong' => null,
-        'co' => null,
-        'chnl' => null,
-        'userip' => null,
-        'useragent' => null,
-    ];
+    protected $baseUrl = 'http://api.indeed.com/ads/apisearch';
 
     /**
      * Required params
@@ -89,50 +21,95 @@ class Indeed extends AbstractProvider
     ];
 
     /**
-     * Create new indeed jobs client.
+     * Get default parameters and values
      *
-     * @param array $parameters
+     * @return  string
      */
-    public function __construct($parameters = [])
+    public function defaultParameters()
     {
-        $this->addDefaultUserInformationToParameters($parameters);
-        $this->addDefaultFormatToParameters($parameters);
-        parent::__construct($parameters);
-    }
-
-    /**
-     * Defaults to json if no format is initially provided
-     *
-     * @param array  $parameters
-     *
-     * @return void
-     */
-    protected function addDefaultFormatToParameters(&$parameters = [])
-    {
-        if (!isset($parameters['format'])) {
-            $parameters['format'] = $this->getFormat();
-        }
-    }
-
-    /**
-     * Attempts to apply default user information to parameters when none provided.
-     *
-     * @param array  $parameters
-     *
-     * @return void
-     */
-    protected function addDefaultUserInformationToParameters(&$parameters = [])
-    {
-        $defaultKeys = [
-            'userip' => 'REMOTE_ADDR',
-            'useragent' => 'HTTP_USER_AGENT',
+        return [
+            'publisher' => null,
+            'v' => '2',
+            'format' => null,
+            'q' => null,
+            'l' => null,
+            'sort' => null,
+            'radius' => null,
+            'st' => null,
+            'jt' => null,
+            'start' => null,
+            'limit' => null,
+            'fromage' => null,
+            'highlight' => null,
+            'filter' => null,
+            'latlong' => null,
+            'co' => null,
+            'chnl' => null,
+            'userip' => null,
+            'useragent' => null,
         ];
+    }
 
-        array_walk($defaultKeys, function ($value, $key) use (&$parameters) {
-            if (!isset($parameters[$key]) && isset($_SERVER[$value])) {
-                $parameters[$key] = $_SERVER[$value];
-            }
-        });
+    /**
+     * Job object default keys that must be set.
+     *
+     * @return  string
+     */
+    public function defaultResponseFields()
+    {
+        return [
+            'jobtitle',
+            'company',
+            'formattedLocation',
+            'formattedLocationFull',
+            'source',
+            'date',
+            'snippet',
+            'url',
+            'jobkey',
+            'latitude',
+            'longitude'
+        ];
+    }
+
+    /**
+     * Get parameters that MUST be set in order to satisfy the APIs requirements
+     *
+     * @return  string
+     */
+    public function requiredParameters()
+    {
+
+    }
+
+    /**
+     * Get parameters that CAN be set
+     *
+     * @return  string
+     */
+    public function validParameters()
+    {
+        return [
+            'publisher',
+            'v',
+            'format',
+            'q',
+            'l',
+            'sort',
+            'radius',
+            'st',
+            'jt',
+            'start',
+            'limit',
+            'fromage',
+            'highlight',
+            'filter',
+            'latlong',
+            'co',
+            'chnl',
+            'userip',
+            'useragent',
+        ];
     }
 
     /**
@@ -140,7 +117,7 @@ class Indeed extends AbstractProvider
      *
      * @param array $payload
      *
-     * @return \JobBrander\Jobs\Client\Job
+     * @return \JobApis\Jobs\Client\Job
      */
     public function createJobObject($payload)
     {
@@ -194,23 +171,6 @@ class Indeed extends AbstractProvider
     }
 
     /**
-     * Get data format
-     *
-     * @return string
-     */
-    public function getFormat()
-    {
-        $validFormats = ['json', 'xml'];
-
-        if (isset($this->queryParams['format'])
-            && in_array(strtolower($this->queryParams['format']), $validFormats)) {
-            return strtolower($this->queryParams['format']);
-        }
-
-        return 'json';
-    }
-
-    /**
      * Get keyword for search query
      *
      * @return string Should return the value of the parameter describing this query
@@ -228,16 +188,6 @@ class Indeed extends AbstractProvider
     public function getListingsPath()
     {
         return 'results';
-    }
-
-    /**
-     * Get http verb
-     *
-     * @return  string
-     */
-    public function getVerb()
-    {
-        return 'GET';
     }
 
     /**

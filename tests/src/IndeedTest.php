@@ -1,8 +1,8 @@
-<?php namespace JobBrander\Jobs\Client\Providers\Test;
+<?php namespace JobApis\Jobs\Client\Providers\Test;
 
-use JobBrander\Jobs\Client\Collection;
-use JobBrander\Jobs\Client\Job;
-use JobBrander\Jobs\Client\Providers\Indeed;
+use JobApis\Jobs\Client\Collection;
+use JobApis\Jobs\Client\Job;
+use JobApis\Jobs\Client\Providers\Indeed;
 
 use Mockery as m;
 
