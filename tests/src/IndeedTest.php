@@ -237,7 +237,7 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
         $this->assertCount($provider['jobs_count'], $results);
     }
 
-    public function testItCanRetreiveResults()
+    public function testItCanRetreiveRealResults()
     {
         if (!getenv('PUBLISHER')) {
             $this->markTestSkipped('PUBLISHER not set. Real API call will not be made.');
