@@ -12,6 +12,11 @@
     "license": "Apache-2.0",
     "authors": [
         {
+            "name": "Karl Hughes",
+            "email": "khughes.me@gmail.com",
+            "homepage": "http://www.karllhughes.com"
+        },
+        {
             "name": "Steven Maguire",
             "email": "stevenmaguire@gmail.com",
             "homepage": "https://github.com/stevenmaguire"

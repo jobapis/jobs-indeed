@@ -19,6 +19,22 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
         $this->client = new Indeed($this->params);
     }
 
+    /**
+     * @group failing
+     */
+    public function testTheWholeThing()
+    {
+        $this->params = [
+            'publisher' => '3806336598146294',
+        ];
+
+        $this->client = new Indeed($this->params);
+
+        $results = $this->client->setQ('engineering')->getJobs();
+
+        $this->assertNotNull($results);
+    }
+
     private function getResultItems($count = 1)
     {
         $results = [];

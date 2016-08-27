@@ -30,7 +30,7 @@ class Indeed extends AbstractProvider
         return [
             'publisher' => null,
             'v' => '2',
-            'format' => null,
+            'format' => 'json',
             'q' => null,
             'l' => null,
             'sort' => null,
@@ -79,7 +79,9 @@ class Indeed extends AbstractProvider
      */
     public function requiredParameters()
     {
-
+        return [
+            'publisher'
+        ];
     }
 
     /**
@@ -121,8 +123,6 @@ class Indeed extends AbstractProvider
      */
     public function createJobObject($payload)
     {
-        $payload = static::parseAttributeDefaults($payload, $this->jobDefaults);
-
         $job = $this->createJobFromPayload($payload);
 
         $job = $this->setJobLocation($job, $payload['formattedLocation']);
