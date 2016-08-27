@@ -45,8 +45,8 @@ class Indeed extends AbstractProvider
             'latlong' => null,
             'co' => null,
             'chnl' => null,
-            'userip' => null,
-            'useragent' => null,
+            'userip' => $this->userIp(),
+            'useragent' => $this->userAgent(),
         ];
     }
 
@@ -177,7 +177,7 @@ class Indeed extends AbstractProvider
      */
     public function getKeyword()
     {
-        return 'q';
+        return $this->queryParams['q'];
     }
 
     /**
@@ -203,6 +203,37 @@ class Indeed extends AbstractProvider
         $latlong = (bool) $value ? '1' : null;
 
         return $this->updateQuery($latlong, 'latlong');
+    }
+
+    /**
+     * Set keyword for search query
+     *
+     * @return Indeed
+     */
+    public function setKeyword($value)
+    {
+        $this->q = $value;
+        return $this;
+    }
+
+    /**
+     * Return the user's IP address
+     *
+     * @return  string
+     */
+    public function userAgent()
+    {
+        return isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
+    }
+
+    /**
+     * Return the user's IP address
+     *
+     * @return  string
+     */
+    public function userIp()
+    {
+        return isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : null;
     }
 
     /**

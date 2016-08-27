@@ -19,22 +19,6 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
         $this->client = new Indeed($this->params);
     }
 
-    /**
-     * @group failing
-     */
-    public function testTheWholeThing()
-    {
-        $this->params = [
-            'publisher' => '3806336598146294',
-        ];
-
-        $this->client = new Indeed($this->params);
-
-        $results = $this->client->setQ('engineering')->getJobs();
-
-        $this->assertNotNull($results);
-    }
-
     private function getResultItems($count = 1)
     {
         $results = [];
@@ -80,15 +64,6 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('json', $format);
     }
 
-    public function testItWillUseXmlFormatWhenProvided()
-    {
-        $formatAttempt = 'xml';
-
-        $format = $this->client->setFormat($formatAttempt)->getFormat();
-
-        $this->assertEquals($formatAttempt, $format);
-    }
-
     public function testItWillUseGetHttpVerb()
     {
         $verb = $this->client->getVerb();
@@ -105,44 +80,26 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
 
     public function testUrlContainsSearchParametersWhenProvided()
     {
-        $client = new \ReflectionClass(Indeed::class);
-        $property = $client->getProperty("queryMap");
-        $property->setAccessible(true);
-        $queryMap = $property->getValue($this->client);
-
-        $queryParameters = array_values($queryMap);
-        $params = [];
-        $skipParams = ['filter', 'latlong'];
-
-        array_map(function ($item) use (&$params, $skipParams) {
-            if (!in_array($item, $skipParams)) {
-                $params[$item] = uniqid();
-            }
-        }, $queryParameters);
-
-        $newClient = new Indeed(array_merge($this->params, $params));
+        $newClient = new Indeed($this->params);
 
         $url = $newClient->getUrl();
 
-        array_walk($params, function ($v, $k) use ($url) {
+        array_walk($this->params, function ($v, $k) use ($url) {
             $this->assertContains($k.'='.$v, $url);
         });
     }
 
     public function testUrlContainsSearchParametersWhenSet()
     {
-        $client = new \ReflectionClass(Indeed::class);
-        $property = $client->getProperty("queryMap");
-        $property->setAccessible(true);
-        $queryMap = $property->getValue($this->client);
+        $params = $this->params;
         $skipParams = ['filter', 'latlong'];
 
-        array_walk($queryMap, function ($v, $k) use ($skipParams) {
+        array_walk($params, function ($v, $k) use ($skipParams) {
             if (!in_array($v, $skipParams)) {
                 $value = uniqid();
-                $url = $this->client->$k($value)->getUrl();
+                $url = $this->client->{'set'.ucfirst($k)}($value)->getUrl();
 
-                $this->assertContains($v.'='.$value, $url);
+                $this->assertContains($k.'='.$value, $url);
             }
         });
     }
@@ -220,7 +177,7 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException JobBrander\Jobs\Client\Exceptions\MissingParameterException
+     * @expectedException JobApis\Jobs\Client\Exceptions\MissingParameterException
      */
     public function testItWillThrowExceptionWhenPublisherNotProvided()
     {
@@ -294,7 +251,7 @@ class IndeedTest extends \PHPUnit_Framework_TestCase
         $client->setKeyword($keyword)->includeLatLong(1);
         $results = $client->getJobs();
 
-        $this->assertInstanceOf('JobBrander\Jobs\Client\Collection', $results);
+        $this->assertInstanceOf('JobApis\Jobs\Client\Collection', $results);
 
         foreach($results as $job) {
             $this->assertEquals($keyword, $job->query);
