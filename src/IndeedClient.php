@@ -2,24 +2,8 @@
 
 use JobApis\Jobs\Client\Job;
 
-class Indeed extends AbstractProvider
+class IndeedClient extends AbstractProvider
 {
-    /**
-     * Base API Url
-     *
-     * @var string
-     */
-    protected $baseUrl = 'http://api.indeed.com/ads/apisearch';
-
-    /**
-     * Required params
-     *
-     * @var array
-     */
-    protected $requiredParams = [
-        'publisher',
-    ];
-
     /**
      * Returns the standardized job object
      *
@@ -308,58 +292,6 @@ class Indeed extends AbstractProvider
     {
         $this->st = $value;
         return $this;
-    }
-
-    /**
-     * Set User IP for query
-     *
-     * @return Indeed
-     */
-    public function setUserIp($value)
-    {
-        $this->userip = $value;
-        return $this;
-    }
-
-    /**
-     * Set site type for query
-     *
-     * @return Indeed
-     */
-    public function setUserAgent($value)
-    {
-        $this->useragent = $value;
-        return $this;
-    }
-
-    /**
-     * Return the user's IP address
-     *
-     * @return  string
-     */
-    public function userAgent()
-    {
-        return isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
-    }
-
-    /**
-     * Return the user's IP address
-     *
-     * @return  string
-     */
-    public function userIp()
-    {
-        return isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : null;
-    }
-
-    /**
-     * Get parameters that CAN be set
-     *
-     * @return  string
-     */
-    public function validParameters()
-    {
-        return array_keys($this->defaultParameters());
     }
 
     /**

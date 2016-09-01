@@ -24,7 +24,7 @@
     ],
     "require": {
         "php": ">=5.5.0",
-        "jobbrander/jobs-common": "dev-v2-beta"
+        "jobbrander/jobs-common": "dev-v2-beta-query"
     },
     "require-dev": {
         "phpunit/phpunit": ">=4.6",
