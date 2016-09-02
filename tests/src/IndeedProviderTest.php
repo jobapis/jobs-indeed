@@ -3,7 +3,6 @@
 use JobApis\Jobs\Client\Collection;
 use JobApis\Jobs\Client\Job;
 use JobApis\Jobs\Client\Providers\IndeedProvider;
-
 use JobApis\Jobs\Client\Queries\IndeedQuery;
 use Mockery as m;
 
