@@ -34,7 +34,7 @@
     },
     "autoload": {
         "psr-4": {
-            "JobApis\\Jobs\\Client\\Providers\\": "src/"
+            "JobApis\\Jobs\\Client\\": "src/"
         }
     },
     "autoload-dev": {

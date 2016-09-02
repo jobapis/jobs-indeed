@@ -179,7 +179,7 @@ class IndeedQuery extends AbstractQuery
         return [
             'useragent' => $this->userAgent(),
             'userip' => $this->userIp(),
-            'v' => API_VERSION,
+            'v' => static::API_VERSION,
         ];
     }
 
