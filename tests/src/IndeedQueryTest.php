@@ -48,8 +48,37 @@ class IndeedQueryTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->query->isValid());
     }
 
-    public function testItCanCreateQueryWithAllAttributes()
+    /**
+     * @expectedException OutOfRangeException
+     */
+    public function testItThrowsExceptionWhenSettingInvalidAttribute()
     {
-        $this->assertTrue(true);
+        $this->query->set(uniqid(), uniqid());
+    }
+
+    /**
+     * @expectedException OutOfRangeException
+     */
+    public function testItThrowsExceptionWhenGettingInvalidAttribute()
+    {
+        $this->query->get(uniqid());
+    }
+
+    public function testItSetsAndGetsValidAttributes()
+    {
+        $attributes = [
+            'q' => uniqid(),
+            'l' => uniqid(),
+            'publisher' => uniqid(),
+            'highlight' => uniqid(),
+        ];
+
+        foreach ($attributes as $key => $value) {
+            $this->query->set($key, $value);
+        }
+
+        foreach ($attributes as $key => $value) {
+            $this->assertEquals($value, $this->query->get($key));
+        }
     }
 }
