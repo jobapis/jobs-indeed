@@ -48,6 +48,14 @@ class IndeedQueryTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->query->isValid());
     }
 
+    public function testItCanAddAttributesToUrl()
+    {
+        $url = $this->query->getUrl();
+        $this->assertContains('v=', $url);
+        $this->assertContains('userip=', $url);
+        $this->assertContains('useragent=', $url);
+    }
+
     /**
      * @expectedException OutOfRangeException
      */

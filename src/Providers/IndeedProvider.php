@@ -61,7 +61,7 @@ class IndeedProvider extends AbstractProvider
      * @return  string
      */
     public function getListingsPath() {
-        return 'jobs';
+        return 'results';
     }
 
     /**
