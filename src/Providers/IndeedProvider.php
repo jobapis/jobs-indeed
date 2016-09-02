@@ -60,7 +60,8 @@ class IndeedProvider extends AbstractProvider
      *
      * @return  string
      */
-    public function getListingsPath() {
+    public function getListingsPath()
+    {
         return 'results';
     }
 
