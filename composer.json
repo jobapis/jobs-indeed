@@ -10,7 +10,6 @@
     ],
     "homepage": "https://github.com/JobBrander/jobs-indeed",
     "license": "Apache-2.0",
-    "minimum-stability": "dev",
     "authors": [
         {
             "name": "Karl Hughes",
