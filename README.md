@@ -20,38 +20,46 @@ composer require jobapis/jobs-indeed
 
 ## Usage
 
-Usage is the same as JobApis' Jobs Client, using `\JobApis\Jobs\Client\Providers\Indeed` as the provider.
-
-Any of the parameters documented in Indeed's documentation can be used by appending "set" to them. For example, `setQ('query')` would allow you to set the query for an API call. Alternatively, we offer the shortcut methods listed below.
-
+Create a Query object and add all the parameters you'd like via the constructor.
+ 
 ```php
-$client = new JobApis\Jobs\Client\Provider\Indeed([
-    'publisher' => 'YOUR INDEED PUBLISHER ID',
-    'v' => 2, // Optional. Default is 2.
-    'highlight' => 0,
+// Add parameters to the query via the constructor
+$query = new JobApis\Jobs\Client\Queries\IndeedQuery([
+    'publisher' => YOUR_PUBLISHER_ID
 ]);
-
-$jobs = $client
-    ->setKeyword('project manager')                 // Query. By default terms are ANDed. To see what is possible, use the [advanced search page](http://www.indeed.com/advanced_search) to perform a search and then check the url for the q value.
-    ->setFormat('json')                             // Format. Which output format of the API you wish to use. The options are "xml" and "json". If omitted or invalid, the json format is used.
-    ->setLocation('Chicago, IL')                    // Location. Use a postal code or a "city, state/province/region" combination.
-    ->setSort('date')                               // Sort by relevance or date. Default is relevance.
-    ->setRadius('100')                              // Distance from search location ("as the crow flies"). Default is 25.
-    ->setSiteType('jobsite')                        // Site type. To show only jobs from job boards use "jobsite". For jobs from direct employer websites use "employer".
-    ->setJobType('fulltime')                        // Job type. Allowed values: "fulltime", "parttime", "contract", "internship", "temporary".
-    ->setStart(2)                                   // Start results at this result number, beginning with 0. Default is 0.
-    ->setLimit(200)                                 // Maximum number of results returned per query. Default is 10
-    ->setDaysBack(10)                               // Number of days back to search.
-    ->setFilterDuplicates(false)                    // Filter duplicate results. 0 turns off duplicate job filtering. Default is 1.
-    ->setIncludeLatLong(true)                       // If latlong=1, returns latitude and longitude information for each job result. Default is 0.
-    ->setCountry('us')                              // Search within country specified. Default is us.
-    ->setChnl('channel-one')                        // Channel Name: Group API requests to a specific channel
-    ->setUserIp($_SERVER['REMOTE_ADDR'])            // The IP number of the end-user to whom the job results will be displayed.
-    ->setUserAgent($_SERVER['HTTP_USER_AGENT'])     // The User-Agent (browser) of the end-user to whom the job results will be displayed.
-    ->getJobs();
 ```
 
-The `getJobs` method will return a [Collection](https://github.com/jobapis/jobs-common/blob/master/src/Collection.php) of [Job](https://github.com/jobapis/jobs-common/blob/master/src/Job.php) objects.
+Or via the "set" method. All of the parameters documented in Indeed's documentation can be added.
+
+```php
+// Add parameters via the set() method
+$query->set('q', 'engineering');
+```
+
+You can even chain them if you'd like.
+
+```php
+// Add parameters via the set() method
+$query->set('l', 'Chicago, IL')
+    ->set('highlight', '1')
+    ->set('latlong', '1');
+```
+ 
+Then inject the query object into the provider.
+
+```php
+// Instantiating an IndeedProvider with a query object
+$client = new JobApis\Jobs\Client\Provider\IndeedProvider($query);
+```
+
+And call the "getJobs" method to retrieve results.
+
+```php
+// Get a Collection of Jobs
+$jobs = $client->getJobs();
+```
+
+This will return a [Collection](https://github.com/jobapis/jobs-common/blob/master/src/Collection.php) of [Job](https://github.com/jobapis/jobs-common/blob/master/src/Job.php) objects.
 
 ## Testing
 

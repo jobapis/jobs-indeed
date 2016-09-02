@@ -1,7 +1,7 @@
 # Changelog
 All Notable changes to `jobs-indeed` will be documented in this file
 
-## 1.0.0 - 2016-08-26
+## 1.0.0-alpha - 2016-09-01
 
 ### Added
 - Support for v.2 of jobs-common package
