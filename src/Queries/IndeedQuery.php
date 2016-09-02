@@ -10,6 +10,13 @@ class IndeedQuery extends AbstractQuery
     const API_VERSION = 2;
 
     /**
+     * Response format.
+     *
+     * @var integer
+     */
+    const API_FORMAT = 'json';
+
+    /**
      * User Agent
      *
      * @var string
@@ -180,6 +187,7 @@ class IndeedQuery extends AbstractQuery
             'useragent' => $this->userAgent(),
             'userip' => $this->userIp(),
             'v' => static::API_VERSION,
+            'format' => static::API_FORMAT,
         ];
     }
 
