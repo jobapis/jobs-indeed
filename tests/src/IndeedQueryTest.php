@@ -14,6 +14,13 @@ class IndeedQueryTest extends \PHPUnit_Framework_TestCase
         $this->query = new IndeedQuery();
     }
 
+    public function testItAddsDefaultAttributes()
+    {
+        $this->assertEquals($_SERVER['HTTP_USER_AGENT'], $this->query->get('useragent'));
+        $this->assertEquals($_SERVER['REMOTE_ADDR'], $this->query->get('userip'));
+        $this->assertEquals('2', $this->query->get('v'));
+    }
+
     public function testItCanGetBaseUrl()
     {
         $this->assertEquals(
@@ -27,5 +34,22 @@ class IndeedQueryTest extends \PHPUnit_Framework_TestCase
         $keyword = uniqid();
         $this->query->set('q', $keyword);
         $this->assertEquals($keyword, $this->query->getKeyword());
+    }
+
+    public function testItReturnsFalseIfRequiredAttributesMissing()
+    {
+        $this->assertFalse($this->query->isValid());
+    }
+
+    public function testItReturnsTrueIfRequiredAttributesPresent()
+    {
+        $this->query->set('publisher', uniqid());
+
+        $this->assertTrue($this->query->isValid());
+    }
+
+    public function testItCanCreateQueryWithAllAttributes()
+    {
+        $this->assertTrue(true);
     }
 }

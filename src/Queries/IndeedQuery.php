@@ -202,7 +202,7 @@ class IndeedQuery extends AbstractQuery
      *
      * @return  string
      */
-    public function userAgent()
+    protected function userAgent()
     {
         return isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
     }
@@ -212,7 +212,7 @@ class IndeedQuery extends AbstractQuery
      *
      * @return  string
      */
-    public function userIp()
+    protected function userIp()
     {
         return isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : null;
     }
