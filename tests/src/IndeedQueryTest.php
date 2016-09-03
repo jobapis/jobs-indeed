@@ -1,4 +1,4 @@
-<?php namespace JobApis\Jobs\Client\Providers\Test;
+<?php namespace JobApis\Jobs\Client\Test;
 
 use JobApis\Jobs\Client\Queries\IndeedQuery;
 use Mockery as m;

@@ -24,7 +24,7 @@
     ],
     "require": {
         "php": ">=5.5.0",
-        "jobbrander/jobs-common": "^2.0.0-beta"
+        "jobapis/jobs-common": "^2.0.0"
     },
     "require-dev": {
         "phpunit/phpunit": ">=4.6",
@@ -39,7 +39,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "JobApis\\Jobs\\Client\\Providers\\Test\\": "tests/src/"
+            "JobApis\\Jobs\\Client\\Test\\": "tests/src/"
         }
     }
 }
