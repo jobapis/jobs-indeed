@@ -1,6 +1,11 @@
 # Changelog
 All Notable changes to `jobs-indeed` will be documented in this file
 
+## 1.1.0 - 2017-01-21
+
+### Fixed
+- Upgraded Jobs-Common dependency to address a bug related to empty results from the API.
+
 ## 1.0.0 - 2016-09-02
 
 ### Added
